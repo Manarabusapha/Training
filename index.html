@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>شركة كهرباء الجنوب - SELCO</title>
+  <!-- ربط ملف CSS خارجي -->
+  <link rel="stylesheet" href="style.css">
+  <!-- مكتبة لتحويل الـ PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- صفحة اختيار الدخول (Landing Page) -->
+  <div class="page" id="landing-page">
+    <div class="card">
+      <img src="logo.png" alt="SELCO Logo" class="logo">
+      <h2 class="company-name">شركة كهرباء الجنوب <span>(SELCO)</span></h2>
+      <div class="welcome-buttons">
+        <button class="next-btn user-btn" onclick="loginAsUser()"> User</button>
+        <button class="next-btn admin-btn" onclick="showAdminLogin()">admin </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نموذج تسجيل دخول الأدمن -->
+  <div class="page" id="admin-login-page" style="display: none;">
+    <div class="card">
+      <h2 class="company-name">تسجيل دخول الأدمن</h2>
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label for="admin-username">اسم المستخدم:</label>
+          <input type="text" id="admin-username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="admin-password">كلمة المرور:</label>
+          <input type="password" id="admin-password" name="password" required>
+        </div>
+        <div id="admin-error-message" class="error-message" style="display: none;"></div>
+        <button type="submit" class="next-btn">دخول</button>
+        <button type="button" class="next-btn cancel-btn" onclick="backToLanding()">العودة</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- لوحة تحكم الأدمن (Dashboard) -->
+  <div class="dashboard" id="dashboard-page" style="display: none;">
+    <nav class="admin-navbar">
+      <div class="nav-right">
+        <img src="logo.png" alt="SELCO Logo" class="nav-logo">
+        <span class="nav-title">لوحة تحكم </span>
+      </div>
+      <button class="logout-btn" onclick="logoutAdmin()">تسجيل الخروج</button>
+    </nav>
+    
+    <div class="dashboard-container">
+      <div class="admin-header">
+      </div>
+
+      <h2 style="margin-top: 30px;">الطلبات المرسلة من المستخدمين</h2>
+      
+      <!-- فلاتر -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <label for="request-filter"> النوع:</label>
+          <select id="request-filter" onchange="filterRequests()">
+            <option value="all">جميع الطلبات</option>
+            <option value="subscription">طلبات الاشتراك</option>
+            <option value="request">الطلبات العامة</option>
+            <option value="complaint">الشكاوى</option>
+            <option value="theft">بلاغات السرقة</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="date-filter"> التاريخ:</label>
+          <input type="date" id="date-filter" onchange="filterRequests()">
+        </div>
+
+        <div class="filter-group">
+          <label for="branch-filter">الفرع:</label>
+          <select id="branch-filter" onchange="filterRequests()">
+            <option value="all">جميع الفروع</option>
+            <option value="يطا">يطا</option>
+            <option value="دورا">دورا</option>
+            <option value="الظاهرية">الظاهرية</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="status-filter">الحالة:</label>
+          <select id="status-filter" onchange="filterRequests()">
+            <option value="all">جميع الحالات</option>
+            <option value="pending">قيد المراجعة</option>
+            <option value="approved">مقبول</option>
+            <option value="rejected">مرفوض</option>
+            <option value="completed">مكتمل</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div id="requests-list" class="requests-list">
+        <p class="no-requests">لا توجد طلبات حتى الآن</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- الصفحة الأولى -->
+  <div class="page" id="welcome" style="display: none;">
+    <div class="card">
+      <img src="logo.png" alt="SELCO Logo" class="logo">
+      <p class="welcome-text">مرحبًا بك في نظام خدمات</p>
+      <h2 class="company-name">شركة كهرباء الجنوب <span>(SELCO)</span></h2>
+      <div class="welcome-buttons">
+        <button class="next-btn" onclick="goNext()">التالي ←</button>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- الصفحة الرئيسية -->
+  <div class="home" id="home">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="nav-right">
+        <img src="logo.png" alt="SELCO Logo" class="nav-logo">
+        <span class="nav-title">شركة كهرباء الجنوب</span>
+      </div>
+      <ul class="nav-links">
+        <li class="active" data-section="home">الرئيسية</li>
+        <li data-section="services">الخدمات الإلكترونية</li>
+        <li data-section="about">عن الشركة</li>
+        <li data-section="contact">التواصل</li>
+      </ul>
+    </nav>
+
+    <!-- Welcome Section -->
+    <section class="welcome-section" id="home-section">
+      <div class="hero-banner">
+        <img src="hero.jpg" alt="شركة كهرباء الجنوب" class="hero-image">
+        <div class="welcome">
+          <h1>مرحبًا بك في  <span>شركة كهرباء الجنوب (Selco) </span></h1>
+        </div>
+      </div>
+      <h2 class="home-services-title" onclick="navigateToSection('services')">الخدمات الإلكترونية</h2>
+      <div class="home-service-list">
+        <div class="service-card" onclick="navigateToSection('services'); showForm('subscription')">
+          <h3>طلب اشتراك كهرباء</h3>
+          <p>تقديم طلب اشتراك جديد</p>
+        </div>
+        <div class="service-card" onclick="navigateToSection('services'); showForm('request')">
+          <h3>تقديم الطلبات</h3>
+          <p>طلبات عامة وفنية</p>
+        </div>
+        <div class="service-card" onclick="navigateToSection('services'); showForm('complaint')">
+          <h3>تقديم شكوى</h3>
+          <p>إرسال شكوى أو استفسار</p>
+        </div>
+        <div class="service-card" onclick="navigateToSection('services'); showForm('theft')">
+          <h3>الإبلاغ عن سرقة</h3>
+          <p>إبلاغ عن سرقة كهربائية</p>
+        </div>
+      </div>
+      <h2 class="home-about-title">عن الشركة</h2>
+      <section class="home-about-preview home-static-section home-about-static" data-home-display="flex">
+        <img src="about.png" alt="شركة كهرباء الجنوب" class="home-about-image">
+        <div class="home-about-content">
+          <span class="home-about-label">تعرف علينا</span>
+          <p>شركة كهرباء الجنوب شركة مساهمة خصوصية تعمل على توزيع الطاقة الكهربائية وتقديم خدمات موثوقة لأهالي مناطق امتيازها.</p>
+          <button type="button" class="submit-btn" onclick="navigateToSection('about')">اقرأ المزيد</button>
+        </div>
+      </section>
+      <section class="home-payment-section home-static-section" data-home-display="block">
+        <div class="home-payment-heading">
+          <span class="home-about-label">خدمة إلكترونية</span>
+          <h2>شحن العدادات ودفع الفواتير</h2>
+          <p>بخطوات سهلة وسريعة، اشحن عداد الكهرباء الخاص بك من خلال منصة E-SADAD</p>
+        </div>
+        <div class="home-payment-media">
+          <img src="esdad.png" alt="منصة E-SADAD لشحن عداد الكهرباء" class="payment-image" onclick="openPaymentImage()" tabindex="0">
+          <video controls preload="metadata" poster="esdad.png" class="payment-video">
+            <source src="esadad.mp4" type="video/mp4">
+            المتصفح لا يدعم تشغيل الفيديو.
+          </video>
+        </div>
+      </section>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section" id="services-section" style="display: none;">
+      <img src="electricity.jpg" alt="Electricity" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 20px; margin-bottom: 20px;">
+      <h2>الخدمات الإلكترونية</h2>
+      <div class="service-cards">
+        <div class="service-card" onclick="showForm('subscription')">
+          <h3>طلب اشتراك كهرباء</h3>
+          <p>تقديم طلب اشتراك جديد</p>
+        </div>
+        <div class="service-card" onclick="showForm('request')">
+          <h3>تقديم الطلبات</h3>
+          <p>طلبات عامة وفنية</p>
+        </div>
+        <div class="service-card" onclick="showForm('complaint')">
+          <h3>تقديم شكوى</h3>
+          <p>إرسال شكوى أو استفسار</p>
+        </div>
+        <div class="service-card" onclick="showForm('theft')">
+          <h3>الإبلاغ عن سرقة</h3>
+          <p>إبلاغ عن سرقة كهربائية</p>
+        </div>
+      </div>
+
+      <!-- Subscription Form -->
+      <div class="form-container" id="subscription-form" style="display: none;">
+        <h3>طلب اشتراك كهرباء</h3>
+        <form id="sub-form">
+          <div class="form-group">
+            <label for="sub-name">اسم المشترك</label>
+            <input type="text" id="sub-name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="sub-phone">رقم الهاتف</label>
+            <input type="tel" id="sub-phone" name="phone" required>
+          </div>
+          <div class="form-group">
+            <label for="sub-type">نوع الاشتراك</label>
+            <select id="sub-type" name="subscription_type" required>
+              <option value="">اختر نوع الاشتراك</option>
+              <option value="منزلي">اشتراك منزلي</option>
+              <option value="تجاري">اشتراك تجاري</option>
+              <option value="صناعي">اشتراك صناعي</option>
+              <option value="زراعي">اشتراك زراعي</option>
+              <option value="مؤسسات">اشتراك مؤسسات المجتمع المحلي</option>
+              <option value="أخرى">أخرى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sub-branch">اختيار الفرع</label>
+            <select id="sub-branch" name="branch" required>
+              <option value="">اختر الفرع</option>
+              <option value="يطا">يطا</option>
+              <option value="دورا">دورا</option>
+              <option value="الظاهرية">الظاهرية</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sub-address">العنوان الكامل</label>
+            <input type="text" id="sub-address" name="address" required>
+          </div>
+          <div class="form-group">
+            <label for="sub-phase">نوع الفاز</label>
+            <select id="sub-phase" name="phase" required>
+              <option value="1 فاز">1 فاز</option>
+              <option value="مؤقت">مؤقت</option>
+              <option value="3 فاز">3 فاز</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sub-id">إرفاق صورة الهوية</label>
+            <input type="file" id="sub-id" name="id_image" accept="image/*" required>
+          </div>
+          <div class="form-group">
+            <label for="sub-clearance">إرفاق إذن أشغال</label>
+            <input type="file" id="sub-clearance" name="clearance_image" accept="image/*" required>
+          </div>
+          <div class="form-group">
+            <label for="sub-completion">شهادة إكمال التمديدات</label>
+            <input type="file" id="sub-completion" name="completion_certificate" accept="image/*" required>
+          </div>
+          <button type="submit" class="submit-btn">تأكيد الطلب</button>
+        </form>
+      </div>
+
+      <!-- Request Form -->
+      <div class="form-container" id="request-form" style="display: none;">
+        <h3>تقديم الطلبات</h3>
+        <form id="req-form">
+          <div class="form-group">
+            <label for="req-name">الاسم</label>
+            <input type="text" id="req-name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="req-type">نوع الطلب</label>
+            <select id="req-type" name="request_type" required>
+              <option value="">اختر نوع الطلب</option>
+              <option value="تغيير اشتراك">طلب تغيير نوع الاشتراك</option>
+              <option value="الوصلة المؤقتة">الوصلة المؤقتة</option>
+              <option value="كتاب رسمي">كتاب رسمي</option>
+              <option value="فحص عداد">فحص عداد</option>
+              <option value="تنازل عن اشتراك">تنازل عن اشتراك</option>
+              <option value="صيانة">صيانة</option>
+              <option value="دمج اشتراك">دمج اشتراك</option>
+              <option value="نقل عداد">نقل عداد</option>
+              <option value="أخرى">أخرى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="req-phone">رقم الهاتف</label>
+            <input type="tel" id="req-phone" name="phone" required>
+          </div>
+         <div class="form-group">
+            <label for="sub-branch">اختيار الفرع</label>
+            <select id="sub-branch" name="branch" required>
+              <option value="">اختر الفرع</option>
+              <option value="يطا">يطا</option>
+              <option value="دورا">دورا</option>
+              <option value="الظاهرية">الظاهرية</option>
+            </select>
+          </div> 
+          <div class="form-group">
+            <label for="req-details">تفاصيل الطلب</label>
+            <textarea id="req-details" name="details" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">تأكيد الطلب</button>
+        </form>
+      </div>
+
+      <!-- Complaint Form -->
+      <div class="form-container" id="complaint-form" style="display: none;">
+        <h3>تقديم شكوى</h3>
+        <form id="comp-form">
+          <div class="form-group">
+            <label for="comp-name">الاسم</label>
+            <input type="text" id="comp-name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="comp-phone">رقم الهاتف</label>
+            <input type="tel" id="comp-phone" name="phone" required>
+          </div>
+          <div class="form-group">
+            <label for="comp-type">نوع الشكوى</label>
+            <select id="comp-type" name="complaint_type" required>
+              <option value="">اختر نوع الشكوى</option>
+              <option value="انقطاع التيار الكهربائي">انقطاع التيار الكهربائي</option>
+              <option value="ضعف التيار">ضعف التيار</option>
+              <option value="خلل في العداد">خلل في العداد</option>
+              <option value="مشكلة فاتورة">مشكلة فاتورة</option>
+              <option value="تأخر خدمة">تأخر خدمة</option>
+              <option value="خطر كهربائي">خطر كهربائي</option>
+              <option value="تعدّي على الشبكة">تعدّي على الشبكة</option>
+              <option value="أخرى">أخرى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sub-branch">اختيار الفرع</label>
+            <select id="sub-branch" name="branch" required>
+              <option value="">اختر الفرع</option>
+              <option value="يطا">يطا</option>
+              <option value="دورا">دورا</option>
+              <option value="الظاهرية">الظاهرية</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="comp-details">تفاصيل الشكوى</label>
+            <textarea id="comp-details" name="details" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">تأكيد</button>
+        </form>
+      </div>
+
+      <!-- Theft Report Form -->
+      <div class="form-container" id="theft-form" style="display: none;">
+        <h3>الإبلاغ عن سرقة</h3>
+        <form id="theft-form-element">
+          <fieldset>
+            <legend>بيانات المبلَّغ عنه</legend>
+            <div class="form-group">
+              <label for="theft-reported-name">اسم المبلَّغ عنه</label>
+              <input type="text" id="theft-reported-name" name="theft-reported-name" required>
+            </div>
+            <div class="form-group">
+              <label for="theft-reported-address">عنوان المبلَّغ عنه</label>
+              <input type="text" id="theft-reported-address" name="theft-reported-address" required>
+            </div>
+            <div class="form-group">
+              <label for="theft-type">كيفية السرقة</label>
+              <select id="theft-type" name="theft-type" required>
+                <option value="">اختر نوع السرقة</option>
+                <option value="سرقة من عامود كهرباء">سرقة من عامود كهرباء</option>
+                <option value="سرقة من الكابل الرئيسي">سرقة من الكابل الرئيسي</option>
+                <option value="أخرى">أخرى</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="theft-property-type">نوع العقار</label>
+              <select id="theft-property-type" name="theft-property-type" required>
+                <option value="">اختر نوع العقار</option>
+                <option value="منزلي">منزلي</option>
+                <option value="زراعي">زراعي</option>
+                <option value="تجاري">تجاري</option>
+                <option value="صناعي">صناعي</option>
+                <option value="غير ذلك">غير ذلك</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="theft-details">تفاصيل البلاغ</label>
+              <textarea id="theft-details" name="theft-details" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="theft-file">إرفاق ملف (إن وجد)</label>
+              <input type="file" id="theft-file" name="attachment" accept="image/*,video/*,.pdf,.doc,.docx">
+            </div>
+            <div class="form-group">
+              <label for="theft-branch">الفرع</label>
+              <select id="theft-branch" name="theft-branch" required>
+                <option value="">اختر الفرع</option>
+                <option value="دورا">دورا</option>
+                <option value="يطا">يطا</option>
+                <option value="الظاهرية">الظاهرية</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="theft-location">موقع السرقة</label>
+              <input type="text" id="theft-location" name="theft-location" required>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>بيانات المبلِّغ (اختيارية)</legend>
+            <div class="form-group">
+              <label for="theft-reporter-name">اسم المبلِّغ</label>
+              <input type="text" id="theft-reporter-name" name="theft-reporter-name">
+            </div>
+            <div class="form-group">
+              <label for="theft-reporter-phone">رقم الهاتف</label>
+              <input type="tel" id="theft-reporter-phone" name="theft-reporter-phone">
+            </div>
+          </fieldset>
+          <button type="submit" class="submit-btn">تأكيد البلاغ</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about-section" style="display: none;">
+      <h2>عن الشركة</h2>
+      
+      <div class="about-header">
+      </div>
+
+      <div class="form-container">
+        <p>شركة كهرباء الجنوب هي شركة مساهمة خصوصية محدودة تحمل رقم تسجيل (562439422)، ومساهميها من البلديات والمجالس القروية الواقعة ضمن منطقة عملها في جنوب الضفة الغربية.</p>
+        <p>تم تأسيس الشركة بقرار من السلطة الوطنية الفلسطينية لتطوير خدمة التيار الكهربائي، وتشمل خدماتها توزيع الطاقة الكهربائية في منطقة امتيازها. بدأت أعمالها في دورا، يطا، الظاهرية، بيت أمر، ثم انضمت لاحقًا مجالس محلية وقروية أخرى.</p>
+        <h3>المستفيدون الرئيسيون:</h3>
+        <ul>
+          <li>مؤسسات المجتمع المحلي</li>
+          <li>القطاع المنزلي</li>
+          <li>القطاع التجاري</li>
+          <li>القطاع الزراعي</li>
+          <li>القطاع الصناعي</li>
+        </ul>
+        <h3>الرؤية:</h3>
+        <p>الوصول إلى التميز في تقديم خدمة الكهرباء بأعلى درجات الكفاءة والجودة وبتكلفة معقولة.</p>
+        <h3>الأهداف الاستراتيجية:</h3>
+        <ul>
+          <li>تطوير وتأهيل شبكات الكهرباء في مناطق الامتياز وفقًا لأفضل المعايير</li>
+          <li>تقديم الخدمات الكهربائية لمختلف شرائح المشتركين بأفضل الوسائل التقنية والتكنولوجية وبأفضل المواصفات الفنية وبأقل التكاليف الممكنة.</li>
+          <li>التحسين المستمر لأداء الشركة ماليًا وإداريًا وفنيًا وفقًا لأفضل المعايير.</li>
+          <li>الاستمرار في رفع كفاءة الموارد البشرية في الشركة وتطوير كفاءاتهم وقدراتهم</li>
+          <li>تنفيذ برامج مكثفة لترشيد الطاقة الكهربائية والتوعية المستمرة للمجتمع الفلسطيني.</li>
+          <li>الحفاظ على البيئة والسلامة العامة</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact-section" style="display: none;">
+      <h2>التواصل - الفروع</h2>
+      <div class="branches">
+        <div class="branch">
+          <h3>فرع الظاهرية</h3>
+          <p><strong>العنوان:</strong> جورة الدمة</p>
+          <p><strong>ساعات العمل:</strong> السبت – الخميس: 08:00 ص – 03:30 ظهرًا، الجمعة: عطلة أسبوعية</p>
+          <p><strong>الهاتف:</strong> <span dir="ltr">02-2265601</span></p>
+          <p><strong>الطوارئ:</strong> <span dir="ltr">1700300700 / 133</span></p>
+          <p><strong>البريد الإلكتروني:</strong> <span dir="ltr">info@selco.ps</span></p>
+          <p><strong>الخدمات:</strong> فتح حساب جديد، قطع / إعادة الخدمة، دفع فواتير، تصفية حساب</p>
+        </div>
+        <div class="branch">
+          <h3>فرع يطا</h3>
+          <p><strong>العنوان:</strong> مثلث الكرمل</p>
+          <p><strong>المنطقة:</strong> يطا</p>
+          <p><strong>ساعات العمل:</strong> السبت – الخميس: 08:00 ص – 03:30 ظهرًا، الجمعة: عطلة أسبوعية</p>
+          <p><strong>الهاتف:</strong> <span dir="ltr">02-2271006</span></p>
+          <p><strong>الطوارئ:</strong> <span dir="ltr">1700300700 / 133</span></p>
+          <p><strong>البريد الإلكتروني:</strong> <span dir="ltr">info@selco.ps</span></p>
+          <p><strong>الخدمات:</strong> فتح حساب جديد، قطع / إعادة الخدمة، دفع فواتير، تصفية حساب</p>
+        </div>
+        <div class="branch">
+          <h3>فرع دورا</h3>
+          <p><strong>العنوان:</strong> ناقة نوح</p>
+          <p><strong>المنطقة:</strong> دورا</p>
+          <p><strong>ساعات العمل:</strong> السبت – الخميس: 08:00 ص – 03:30 ظهرًا، الجمعة: عطلة أسبوعية</p>
+          <p><strong>الهاتف:</strong> <span dir="ltr">02-2288355</span></p>
+          <p><strong>الطوارئ:</strong> <span dir="ltr">1700300700 / 133</span></p>
+          <p><strong>البريد الإلكتروني:</strong> <span dir="ltr">info@selco.ps</span></p>
+          <p><strong>الخدمات:</strong> فتح حساب جديد، قطع / إعادة الخدمة، دفع فواتير، تصفية حساب</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <img src="logo.png" alt="شعار شركة كهرباء الجنوب" class="footer-logo">
+          <div>
+            <h2>شركة كهرباء الجنوب</h2>
+            <p>خدمات كهربائية أقرب وأسهل لأهلنا في الجنوب.</p>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h3>روابط سريعة</h3>
+          <button type="button" onclick="navigateToSection('home')">الرئيسية</button>
+          <button type="button" onclick="navigateToSection('services')">الخدمات الإلكترونية</button>
+          <button type="button" onclick="navigateToSection('about')">عن الشركة</button>
+          <button type="button" onclick="navigateToSection('contact')">التواصل</button>
+        </div>
+        <div class="footer-contact">
+          <h3>تواصل معنا</h3>
+          <p>الطوارئ: 1700300700 / 133</p>
+          <p>البريد الإلكتروني: info@selco.ps</p>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 شركة كهرباء الجنوب</div>
+    </footer>
+  </div>
+
+  <div class="image-lightbox" id="payment-image-lightbox" onclick="closePaymentImage(event)" aria-hidden="true">
+    <button type="button" class="lightbox-close" onclick="closePaymentImage(event)" aria-label="إغلاق الصورة">×</button>
+    <img src="esdad.png" alt="منصة E-SADAD بحجم كبير" class="lightbox-image">
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
